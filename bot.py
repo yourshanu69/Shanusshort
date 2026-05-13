@@ -1,5 +1,6 @@
 import time
 import telebot
+from telebot import types
 import threading
 from strategy import get_signal
 import os
@@ -16,12 +17,20 @@ bot_running = False
 MARKETS = ["EURUSD-OTC", "GBPUSD-OTC", "USDJPY-OTC", "AUDUSD-OTC"]
 
 @bot.message_handler(commands=['start'])
-def start(msg):
-    user_id = msg.from_user.id
-    if user_id in approved_users:
-        bot.reply_to(msg, "✅ Approved আছো। /signal লিখে সিগন্যাল নাও")
-    elif user_id in pending_users:
-        bot.reply_to(msg, "⏳ Approval Pending. Wait করো")
+20 def start(msg):
+21     user_id = msg.from_user.id
+22 
+23     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+24     markup.add('/signal', '/start')
+25 
+26     if user_id in approved_users:
+27         bot.reply_to(msg, "✅ Approved আছো। /signal লিখে সিগনাল নাও", reply_markup=markup)
+28     elif user_id in pending_users:
+29         bot.reply_to(msg, "⏳ Approval Pending. Wait করো", reply_markup=markup)
+30     else:
+31         pending_users.add(user_id)
+32         bot.reply_to(msg, "📩 Request পাঠানো হয়েছে। Approval এর জন্য Wait করো", reply_markup=markup)
+33         bot.send_message(ADMIN_ID, f"New Request: {user_id}")
     else:
         pending_users.add(user_id)
         bot.reply_to(msg, "📩 Request পাঠানো হয়েছে। Approval এর জন্য Wait করো")
