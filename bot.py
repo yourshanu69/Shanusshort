@@ -50,7 +50,21 @@ def signal(msg):
     if user_id not in approved_users:
         bot.reply_to(msg, "❌ তুমি Approved না। /start দিয়ে রিকোয়েস্ট পাঠাও")
         return
+    from datetime import datetime, timedelta
+import pytz
+
+def get_signal():
+    # বাংলাদেশ টাইম + 2 মিনিট যোগ করো
+    bd_tz = pytz.timezone('Asia/Dhaka')
+    entry_time = datetime.now(bd_tz) + timedelta(minutes=2)
     
+    signal = {
+        "action": "SELL",
+        "market": "GBPUSD-OTC", 
+        "confidence": "81",
+        "entry_time": entry_time.strftime('%H:%M')  # BST time
+    }
+    return signal
     signal_data = get_signal()
 
     
@@ -58,7 +72,7 @@ def signal(msg):
     market = signal_data['market']
     confidence = signal_data['confidence']
     time = signal_data['time']
-    
+    entry_time = signal_data['entry_time']  # ✅ ঠিক
     # Action অনুযায়ী emoji আর color
     if action.upper() == "CALL":
         action_icon = "🟢"
@@ -86,7 +100,7 @@ def signal(msg):
 💱 <b>Pair:</b> <code>{market}</code>
 {action_icon} <b>Signal:</b> <b>{action_text}</b>
 📊 <b>Confidence:</b> {conf_icon} {confidence}% <i>({conf_level})</i>
-⏰ <b>Entry Time:</b> <code>{time}</code> UTC
+⏰ <b>Entry Time:</b> <code>{entry_time}</code> BST
 ⏳ <b>Expiry:</b> <code>1 Minute</code>
 
 <b>━━━━━━━━━━━━</b>
