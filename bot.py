@@ -9,7 +9,7 @@ approved_users = [1692907487]
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 bot = telebot.TeleBot(BOT_TOKEN)
-bot.remove_webhook()
+bot.delete_webhook(drop_pending_updates=True)
 pending_users = set()
 bot_running = False
 
