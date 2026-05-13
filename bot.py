@@ -39,4 +39,13 @@ def approve(msg):
     except:
         bot.reply_to(msg, "Format: /approve USERID")
 print("Bot Running...")
+@bot.message_handler(commands=['signal'])
+def signal(msg):
+    user_id = msg.from_user.id
+    if user_id not in approved_users:
+        bot.reply_to(msg, "❌ তুমি Approved না। /start দিয়ে রিকোয়েস্ট পাঠাও")
+        return
+    
+    signal_data = get_signal()  # তোমার strategy.py থেকে আসবে
+    bot.reply_to(msg, f"📊 Signal: {signal_data}")
 bot.polling(none_stop=True)
