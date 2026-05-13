@@ -36,4 +36,6 @@ def approve(msg):
         approved_users.add(uid)
         pending_users.discard(uid)
         bot.send_message(uid, "✅ Approved! এখন /signal লিখে Bot ইউজ করতে পারবে")
-        bot.reply
+        bot.reply_to(msg, f"Approved: {uid}")
+    except:
+        bot.reply_to(msg, "Format: /approve USERID")
