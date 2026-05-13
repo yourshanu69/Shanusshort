@@ -107,12 +107,17 @@ def get_signal():
 ⚠️ <i>Money Management মেনে ট্রেড করো</i>
 ⚠️ <i>এটা Financial Advice না</i>
 <b>━━━━━━━━━━━━</b>"""
-    
+@bot.message_handler(commands=['signal'])
+def handle_signal(msg):
     try:
-    bot.reply_to(msg, reply, parse_mode="HTML")
-except Exception as e:
-    print("Signal error:", e)
-    bot.reply_to(msg, reply, parse_mode=None)
+        if msg.from_user.id in approved_users:
+            signal = get_signal()
+            bot.reply_to(msg, signal, parse_mode="HTML")
+        else:
+            bot.reply_to(msg, "Access denied")
+    except Exception as e:
+        print("Signal error:", e)
+        bot.reply_to(msg, "Signal error occurred", parse_mode=None)
 
 print("Bot Running...")
 bot.delete_webhook()
