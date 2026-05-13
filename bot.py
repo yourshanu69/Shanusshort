@@ -5,11 +5,11 @@ from strategy import get_signal
 import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+approved_users = [1692907487]
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-approved_users = set()
 pending_users = set()
 bot_running = False
 
