@@ -33,4 +33,26 @@ def start(msg):
 
 @bot.message_handler(commands=['approve'])
 def approve(msg):
-    if msg.from
+    if msg.from_user.id!= ADMIN_ID:
+        return
+    try:
+        uid = int(msg.text.split()[1])
+        approved_users.add(uid)
+        pending_users.discard(uid)
+        bot.send_message(uid, "✅ Approved! এখন /signal দিয়ে সিগনাল নাও")
+        bot.reply_to(msg, f"Approved: {uid}")
+    except:
+        bot.reply_to(msg, "Format: /approve USERID")
+
+@bot.message_handler(commands=['signal'])
+def signal(msg):
+    user_id = msg.from_user.id
+    if user_id not in approved_users:
+        bot.reply_to(msg, "❌ তুমি Approved না। /start দিয়ে রিকোয়েস্ট পাঠাও")
+        return
+    
+    signal_data = get_signal()
+    bot.reply_to(msg, f"📊 Signal: {signal_data}")
+
+print("Bot Running...")
+bot.polling(none_stop=True)
