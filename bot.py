@@ -108,7 +108,11 @@ def get_signal():
 ⚠️ <i>এটা Financial Advice না</i>
 <b>━━━━━━━━━━━━</b>"""
     
+    try:
     bot.reply_to(msg, reply, parse_mode="HTML")
+except Exception as e:
+    print("Signal error:", e)
+    bot.reply_to(msg, reply, parse_mode=None)
 
 print("Bot Running...")
 bot.delete_webhook()
