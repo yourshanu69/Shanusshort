@@ -25,8 +25,7 @@ def start(msg):
     else:
         pending_users.add(user_id)
         bot.reply_to(msg, "📩 Request পাঠানো হয়েছে। Approval এর জন্য Wait করো")
-        bot.send_message(ADMIN_ID, f"New Request: {user_id}\nApprove করতে /approve {user_id} লিখো")
-
+        bot.send_message(ADMIN_ID, f"New Request: {user_id}")
 @bot.message_handler(commands=['approve'])
 def approve(msg):
     if msg.from_user.id!= ADMIN_ID:
@@ -39,3 +38,5 @@ def approve(msg):
         bot.reply_to(msg, f"Approved: {uid}")
     except:
         bot.reply_to(msg, "Format: /approve USERID")
+print("Bot Running...")
+bot.polling(none_stop=True)
