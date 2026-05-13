@@ -52,7 +52,49 @@ def signal(msg):
         return
     
     signal_data = get_signal()
-    bot.reply_to(msg, f"📊 Signal: {signal_data}")
+
+    
+    action = signal_data['action']
+    market = signal_data['market']
+    confidence = signal_data['confidence']
+    time = signal_data['time']
+    
+    # Action অনুযায়ী emoji আর color
+    if action.upper() == "CALL":
+        action_icon = "🟢"
+        action_text = "BUY / CALL"
+    else:
+        action_icon = "🔴" 
+        action_text = "SELL / PUT"
+    
+    # Confidence level অনুযায়ী emoji
+    conf = int(confidence)
+    if conf >= 85:
+        conf_icon = "🔥"
+        conf_level = "HIGH"
+    elif conf >= 70:
+        conf_icon = "⚡"
+        conf_level = "MEDIUM"
+    else:
+        conf_icon = "⚠️"
+        conf_level = "LOW"
+    
+    reply = f"""<b>━━━━━━━━━━━━</b>
+🎯 <b>PRO SIGNAL ALERT</b> 🎯
+<b>━━━━━━━━━━━━</b>
+
+💱 <b>Pair:</b> <code>{market}</code>
+{action_icon} <b>Signal:</b> <b>{action_text}</b>
+📊 <b>Confidence:</b> {conf_icon} {confidence}% <i>({conf_level})</i>
+⏰ <b>Entry Time:</b> <code>{time}</code> UTC
+⏳ <b>Expiry:</b> <code>1 Minute</code>
+
+<b>━━━━━━━━━━━━</b>
+⚠️ <i>Money Management মেনে ট্রেড করো</i>
+⚠️ <i>এটা Financial Advice না</i>
+<b>━━━━━━━━━━━━</b>"""
+    
+    bot.reply_to(msg, reply, parse_mode="HTML")
 
 print("Bot Running...")
 bot.polling(none_stop=True)
