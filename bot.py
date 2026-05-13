@@ -111,7 +111,7 @@ def get_signal():
     bot.reply_to(msg, reply, parse_mode="HTML")
 
 print("Bot Running...")
-bot.delete_webhook(drop_pending_updates=True)
+bot.delete_webhook()
 print("Webhook deleted, starting polling...")
-
+bot.polling(none_stop=True)
 
