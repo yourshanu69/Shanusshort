@@ -4,19 +4,12 @@ import time
 import os
 from telegram import Bot
 
-# Environment Variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
-# Exchange Setup - Kucoin Futures
-exchange = ccxt.kucoinfutures({
-    'enableRateLimit': True,
-})
-
-# Bot Setup
+exchange = ccxt.kucoinfutures({'enableRateLimit': True})
 bot = Bot(token=BOT_TOKEN)
 
-# Settings
 pairs = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "XRP/USDT", "DOGE/USDT"]
 timeframe = "1m"
 last_signals = {}
@@ -29,8 +22,6 @@ Pair: {pair}
 Signal: {signal_type}
 RSI: {rsi}
 Timeframe: {timeframe}
-
-Time: {time.strftime('%H:%M:%S')}
 """
     try:
         bot.send_message(chat_id=ADMIN_ID, text=message)
@@ -46,8 +37,6 @@ def check_strategies():
                 continue
 
             df = pd.DataFrame(ohlcv, columns=['time','open','high','low','close','volume'])
-
-            # RSI Calculation
             delta = df['close'].diff()
             gain = delta.where(delta > 0, 0).rolling(14).mean()
             loss = -delta.where(delta < 0, 0).rolling(14).mean()
@@ -63,7 +52,6 @@ def check_strategies():
             if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
                 last_signals[signal_key] = "CALL"
                 send_signal(pair, "CALL", round(current_rsi, 2))
-
             elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
                 last_signals[signal_key] = "PUT"
                 send_signal(pair, "PUT", round(current_rsi, 2))
@@ -74,7 +62,6 @@ def check_strategies():
 
 def main():
     print("Bot Started - Kucoin Futures RSI Bot")
-    print(f"Monitoring: {pairs}")
     while True:
         check_strategies()
         time.sleep(60)
