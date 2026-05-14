@@ -32,7 +32,7 @@ Timeframe: {timeframe}
 def check_strategies():
     for pair in pairs:
         try:
-            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)  # ঠিক - 4 স্পেস ভিতরে
+            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
             if len(ohlcv) < 20:
                 continue
 
@@ -57,14 +57,4 @@ def check_strategies():
                 send_signal(pair, "PUT", round(current_rsi, 2))
 
         except Exception as e:
-            print(f"Error with {pair}: {e}")
-            continue
-
-def main():
-    print("Bot Started - Kucoin Futures RSI Bot")
-    while True:
-        check_strategies()
-        time.sleep(60)
-
-if __name__ == "__main__":
-    main()
+            print(f"Error with {pair}: {
