@@ -30,8 +30,8 @@ def get_bangladesh_time():
 
 def check_strategies():
     for pair in pairs:
-        try:ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=50)symbol = pair.replace(" OTC", "/USDT")
-            ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=50)
+        try:
+            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
             if len(ohlcv) < 20:
                 continue
 
@@ -50,11 +50,11 @@ def check_strategies():
 
             signal_key = f"{pair}_{timeframe}"
 
-            if current_rsi < 30 and last_signals.get(signal_key)!= "CALL":
+            if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
                 last_signals[signal_key] = "CALL"
                 send_signal(pair, "CALL", round(current_rsi, 2))
 
-            elif current_rsi > 70 and last_signals.get(signal_key)!= "PUT":
+            elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
                 last_signals[signal_key] = "PUT"
                 send_signal(pair, "PUT", round(current_rsi, 2))
 
