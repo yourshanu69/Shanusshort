@@ -11,7 +11,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 bot = telebot.TeleBot(BOT_TOKEN)
 
-exchange = ccxt.binance()
+exchange = ccxt.kucoin()
 approved_users = [ADMIN_ID]
 last_signals = {}
 user_start_time = {}
@@ -31,8 +31,7 @@ def get_bangladesh_time():
 
 def check_strategies():
     for pair in pairs:
-        try:
-            symbol = pair.replace(" OTC", "/USDT")
+        try:ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=50)symbol = pair.replace(" OTC", "/USDT")
             ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=50)
             if len(ohlcv) < 20:
                 continue
