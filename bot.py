@@ -10,7 +10,6 @@ import pytz
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 bot = telebot.TeleBot(BOT_TOKEN)
-
 exchange = ccxt.kucoin()
 approved_users = [ADMIN_ID]
 last_signals = {}
