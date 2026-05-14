@@ -13,36 +13,20 @@ approved_users = [ADMIN_ID]
 def start(message):
     user_id = message.from_user.id
     if user_id in approved_users:
-        bot.reply_to(message, "✅ Approved আছো। /signal লিখে সিগন্যাল নাও")
+        bot.reply_to(message, "✅ Approved আছো। /signal লিখে সিগনাল নাও")
     else:
-        bot.reply_to(message, "তুমি Approved না।")
+        bot.reply_to(message, "❌ Approved না")
 
 @bot.message_handler(commands=['signal'])
 def signal(message):
     user_id = message.from_user.id
     if user_id not in approved_users:
-        bot.reply_to(message, "তুমি Approved না।")
+        bot.reply_to(message, "❌ Approved না")
         return
-    
-    signal_text = "🚨 SIGNAL\n\nBUY BTC/USDT\nEntry: 67000\nTP: 67500\nSL: 66800"
-    bot.send_message(user_id, signal_text)
-    bot.reply_to(message, "✅ সিগন্যাল পাঠানো হইছে")
 
-bot.infinity_polling()<b>━━━━━━━━━━━━</b>"""
-@bot.message_handler(commands=['signal'])
-def handle_signal(msg):
-    try:
-        if msg.from_user.id in approved_users:
-            signal = get_signal()
-            bot.reply_to(msg, signal, parse_mode="HTML")
-        else:
-            bot.reply_to(msg, "Access denied")
-    except Exception as e:
-        print("Signal error:", e)
-        bot.reply_to(msg, "Signal error occurred", parse_mode=None)
+    signal_text = "🚨 SIGNAL\nBUY BTC/USDT\nEntry: 67000\nTP: 67500\nSL: 66800"
+    bot.send_message(user_id, signal_text)
+    bot.reply_to(message, "✅ সিগনাল পাঠানো হইছে")
 
 print("Bot Running...")
-bot.delete_webhook()
-print("Webhook deleted, starting polling...")
 bot.polling(none_stop=True)
-
