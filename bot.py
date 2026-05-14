@@ -32,7 +32,7 @@ Timeframe: {timeframe}
 def check_strategies():
     for pair in pairs:
         try:
-            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
+            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)  # ঠিক - 4 স্পেস ভিতরে
             if len(ohlcv) < 20:
                 continue
 
