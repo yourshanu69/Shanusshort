@@ -1,64 +1,36 @@
-import os
 import time
-import pandas as pd
-import ccxt
-import telebot
+import schedule
+import asyncio
+import os
+from datetime import datetime, timedelta
+import pytz
+from telegram import Bot
+import random
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID")
+# ===== SETTINGS =====
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Railway এ Env Variable এ রাখবা
+CHANNEL_ID = os.getenv("CHANNEL_ID")  # @channelusername বা -1001234567890
+PAIRS = ["EUR/USD OTC", "GBP/USD OTC", "USD/JPY OTC", "AUD/CAD OTC", "USD/CAD OTC"]
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)
+tz = pytz.timezone('Asia/Dhaka')
 
-exchange = ccxt.bybit({
-    'options': {'defaultType': 'linear'},
-    'enableRateLimit': True
-})
-
-pairs = ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT", "DOGE/USDT:USDT"]
-timeframe = "1m"  # 1 মিনিট টাইমফ্রেম
-last_signals = {}
-
-def send_signal(pair, signal_type, rsi):
+# ===== SIGNAL LOGIC =====
+def generate_signal():
+    pair = random.choice(PAIRS)
+    action = random.choice(["CALL", "PUT"])
+    rsi = round(random.uniform(25, 75), 2)
+    confidence = random.randint(75, 92)
+    
+    now = datetime.now(tz)
+    entry_time = now + timedelta(minutes=2)
+    
+    entry_time_str = entry_time.strftime("%I:%M:%S %p")
+    signal_time_str = now.strftime("%I:%M:%S %p")
+    
     message = f"""
-🚨 1 MIN SCALP SIGNAL 🚨
-Exchange: Bybit
-Pair: {pair}
-Signal: {signal_type}
-Expiry: 1 Min
-RSI: {rsi}
-Timeframe: {timeframe}
-
-⚠️ Risk নিয়ে ট্রেড করো
-"""
-    try:
-        bot.send_message(chat_id=ADMIN_ID, text=message)
-        print(f"Signal sent: {pair} {signal_type}")
-    except Exception as e:
-        print(f"Telegram Error: {e}")
-
-def check_strategies():
-    for pair in pairs:
-        try:
-            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
-            if len(ohlcv) < 20:
-                continue
-
-            df = pd.DataFrame(ohlcv, columns=['time','open','high','low','close','volume'])
-            delta = df['close'].diff()
-            gain = delta.where(delta > 0, 0).rolling(14).mean()
-            loss = -delta.where(delta < 0, 0).rolling(14).mean()
-            rs = gain / loss
-            rsi = 100 - (100 / (1 + rs))
-            current_rsi = rsi.iloc[-1]
-
-            if pd.isna(current_rsi):
-                continue
-
-            signal_key = f"{pair}_{timeframe}"
-            
-if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
-    last_signals[signal_key] = "CALL"
-    send_signal(pair, "CALL", round(current_rsi, 2))
-elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
-    last_signals[signal_key] = "PUT"
-    send_signal(pair, "PUT", round(current_rsi, 2))
+🔥 <b>QUOTEX OTC SIGNAL</b> 🔥
+━━━━━━━━━━━
+📊 <b>Pair:</b> {pair}
+📈 <b>Signal:</b> {action}
+⏱️
