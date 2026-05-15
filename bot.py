@@ -1,23 +1,26 @@
-import ccxt
-import pandas as pd
-import time
 import os
-from telegram import Bot
+import time
+import pandas as pd
+import ccxt
+import telebot
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
-exchange = ccxt.kucoinfutures({'enableRateLimit': True})
-bot = Bot(token=BOT_TOKEN)
+bot = telebot.TeleBot(BOT_TOKEN)
 
-pairs = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "XRP/USDT", "DOGE/USDT"]
-timeframe = "1m"
+exchange = ccxt.binance({
+    'options': {'defaultType': 'future'},
+    'enableRateLimit': True
+})
+
+pairs = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "DOGE/USDT"]
+timeframe = "5m"
 last_signals = {}
 
 def send_signal(pair, signal_type, rsi):
     message = f"""
-🚨 RSI SIGNAL ALERT 🚨
-
+🚨 RSI Signal Alert 🚨
 Pair: {pair}
 Signal: {signal_type}
 RSI: {rsi}
@@ -31,8 +34,8 @@ Timeframe: {timeframe}
 
 def check_strategies():
     for pair in pairs:
-    try:
-    ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
+        try:
+            ohlcv = exchange.fetch_ohlcv(pair, timeframe, limit=50)
             if len(ohlcv) < 20:
                 continue
 
@@ -48,13 +51,5 @@ def check_strategies():
                 continue
 
             signal_key = f"{pair}_{timeframe}"
-
             if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
-                last_signals[signal_key] = "CALL"
-                send_signal(pair, "CALL", round(current_rsi, 2))
-            elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
-                last_signals[signal_key] = "PUT"
-                send_signal(pair, "PUT", round(current_rsi, 2))
-
-        except Exception as e:
-            print(f"Error with {pair}: {
+                last
