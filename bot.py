@@ -9,22 +9,26 @@ ADMIN_ID = os.getenv("ADMIN_ID")
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-exchange = ccxt.binance({
-    'options': {'defaultType': 'future'},
+exchange = ccxt.bybit({
+    'options': {'defaultType': 'linear'},
     'enableRateLimit': True
 })
 
-pairs = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "DOGE/USDT"]
-timeframe = "5m"
+pairs = ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT", "DOGE/USDT:USDT"]
+timeframe = "1m"  # 1 মিনিট টাইমফ্রেম
 last_signals = {}
 
 def send_signal(pair, signal_type, rsi):
     message = f"""
-🚨 RSI Signal Alert 🚨
+🚨 1 MIN SCALP SIGNAL 🚨
+Exchange: Bybit
 Pair: {pair}
 Signal: {signal_type}
+Expiry: 1 Min
 RSI: {rsi}
 Timeframe: {timeframe}
+
+⚠️ Risk নিয়ে ট্রেড করো
 """
     try:
         bot.send_message(chat_id=ADMIN_ID, text=message)
@@ -51,17 +55,10 @@ def check_strategies():
                 continue
 
             signal_key = f"{pair}_{timeframe}"
-            if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
-                last_signals[signal_key] = "CALL"
-                send_signal(pair, "CALL", round(current_rsi, 2))
-            elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
-                last_signals[signal_key] = "PUT"
-                send_signal(pair, "PUT", round(current_rsi, 2))
-
-        except Exception as e:
-            print(f"Error with {pair}: {e}")
-
-print("Bot started...")
-while True:
-    check_strategies()
-    time.sleep(60)
+            
+if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
+    last_signals[signal_key] = "CALL"
+    send_signal(pair, "CALL", round(current_rsi, 2))
+elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
+    last_signals[signal_key] = "PUT"
+    send_signal(pair, "PUT", round(current_rsi, 2))
