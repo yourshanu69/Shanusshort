@@ -52,4 +52,8 @@ def check_strategies():
 
             signal_key = f"{pair}_{timeframe}"
             if current_rsi < 30 and last_signals.get(signal_key) != "CALL":
-                last
+                last_signals[signal_key] = "CALL"
+                send_signal(pair, "CALL", round(current_rsi, 2))
+            elif current_rsi > 70 and last_signals.get(signal_key) != "PUT":
+                last_signals[signal_key] = "PUT"
+                send_signal
